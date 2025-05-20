@@ -19,4 +19,4 @@ NEIGHBOR_PAGING_URL   = (
 )
 
 # 댓글 내용
-COMMENT_TEXT = "안녕하세요! 좋은 글 잘 보고 갑니다 😊"
+COMMENT_TEXT = "좋은 글 잘 보고 갑니다:)"

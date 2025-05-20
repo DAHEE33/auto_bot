@@ -6,6 +6,23 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
+
+# commenter.py 등에 추가
+def extract_post_text(driver):
+    """
+    블로그 본문 텍스트만 추출 (Naver 최신 에디터 기준)
+    """
+    try:
+        # mainFrame 전환 필요 (이미 하고 있다면 생략)
+        container = driver.find_element(By.CSS_SELECTOR, "div.se-main-container")
+        # 본문 전체 텍스트
+        text = container.text.strip()
+        return text
+    except Exception as e:
+        print("[ERROR] 본문 추출 실패:", e)
+        return ""
+
+
 def robust_get_blog(driver, post_url, wait):
     """
     1. PostRead.naver 주소로 먼저 이동
@@ -136,19 +153,22 @@ def write_comment(driver, post_num, comment, private_yn=False):
     """
     # ─── 1) 최신형 대응 ───
     try:
-        time.sleep(2)
-        textarea_div = driver.find_element(By.XPATH, f"//div[@id='naverComment_201_{post_num}__write_textarea']")
-        textarea_div.click()
+        time.sleep(1)
+        # 1. label 클릭 (실제 입력창 활성화)
+        guide_label = driver.find_element(By.CSS_SELECTOR, "label.u_cbox_guide")
+        guide_label.click()
         time.sleep(0.5)
 
-        # 실제 textarea가 div 안에 있을 수 있음
+        # 2. textarea 또는 contenteditable div 찾기
         try:
-            textarea = textarea_div.find_element(By.TAG_NAME, "textarea")
+            # textarea가 div 내부에 바로 생성될 수 있음
+            textarea = driver.find_element(By.XPATH, f"//div[@id='naverComment_201_{post_num}__write_textarea']//textarea")
         except Exception:
             try:
-                textarea = textarea_div.find_element(By.TAG_NAME, "input")
+                # 혹시 contenteditable div인 경우
+                textarea = driver.find_element(By.XPATH, f"//div[@id='naverComment_201_{post_num}__write_textarea' and @contenteditable='true']")
             except Exception:
-                print("[ERROR] 최신형 textarea/input 못 찾음, 구형 방식 시도")
+                print("[ERROR] 최신형 textarea/contenteditable 못 찾음, 구형 방식 시도")
                 raise Exception("신형 실패")  # 아래 구형으로 넘어감
 
         textarea.send_keys(comment)
