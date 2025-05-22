@@ -20,3 +20,7 @@ NEIGHBOR_PAGING_URL   = (
 
 # 댓글 내용
 COMMENT_TEXT = "좋은 글 잘 보고 갑니다:)"
+
+# config.py 최하단에 추가
+# ─────── 요약 결과로 뽑을 문장 수 (Textrankr 등 추출 요약용) ───────
+SUMMARY_SENT_COUNT = int(os.getenv("SUMMARY_SENT_COUNT", "5"))  # 기본값 2문장

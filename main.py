@@ -34,7 +34,7 @@ def main():
     login(driver, use_clipboard=True)
 
     # 이웃 새글 작성자/URL 추출
-    targets = get_targets(driver, limit=1)
+    targets = get_targets(driver, limit=2)
     print("🎯 추출된 대상:", targets)
 
     # URL 리스트만 뽑아서 한 번에 처리
